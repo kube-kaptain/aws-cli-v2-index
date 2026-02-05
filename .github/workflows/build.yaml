@@ -1,0 +1,33 @@
+name: Help AWS Do It's Job
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/basic-quality-and-versioning.yaml@1.0.57
+    permissions:
+      contents: write
+      checks: write
+    with:
+      # Be tidy :-P
+      qc-block-conventional-commits: true
+      qc-block-slash-containing-branches: true
+
+      # Not tests, also generates all the release files...
+      hook-pre-tagging-tests-script-sub-path: bin/checksum-aws-cli-v2-binaries.bash
+
+      # Set up the GH release
+      github-release-notes-file: 'target/release_notes.md'
+      github-release-verbatim-files: "target/amd.sha512 target/amd.url target/arm.sha512 target/arm.url"
+
+      # Version matches the exact version of the AWS CLI processed
+      tag-version-calculation-strategy: 'file-pattern-match'
+      tag-version-pattern-type: 'custom'
+      tag-version-source-sub-path: '.'
+      tag-version-source-file-name: 'VERSION'
+      tag-version-source-custom-pattern: '^AWS_CLI_VERSION=\"([0-9]+\.[0-9]+\.[0-9]+)\"$'
+      tag-version-use-source-version-exact: true
