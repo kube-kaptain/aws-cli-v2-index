@@ -3,7 +3,7 @@
 set -euo pipefail
 
 AWS_CLI_REPO="aws-cli"
-SLEEP_SECONDS="60"
+SLEEP_SECONDS="30"
 
 if [[ ! -d "${AWS_CLI_REPO}/.git" ]]; then
   echo "Error: aws-cli repo not found at ${AWS_CLI_REPO}"
@@ -37,6 +37,21 @@ commit_and_push() {
   git push origin main
 }
 
+# Wait for our repo to have the tag (CI completed)
+wait_for_tag() {
+  local version="${1}"
+  echo "Waiting for tag ${version} to appear in our repo..."
+  while true; do
+    git fetch --tags
+    if git tag --list "${version}" | grep -qx "${version}"; then
+      echo "Tag ${version} found"
+      return
+    fi
+    echo "Tag not yet available, sleeping 10s..."
+    sleep 10
+  done
+}
+
 # Main loop
 main() {
   echo "Fetching tags from aws-cli repo..."
@@ -57,6 +72,7 @@ main() {
       echo "Found version: ${candidate}"
       update_version_file "${candidate}"
       commit_and_push "${candidate}"
+      wait_for_tag "${candidate}"
       echo "Sleeping ${SLEEP_SECONDS}s before next version..."
       sleep "${SLEEP_SECONDS}"
     else
@@ -70,6 +86,7 @@ main() {
         echo "Found version: ${candidate}"
         update_version_file "${candidate}"
         commit_and_push "${candidate}"
+        wait_for_tag "${candidate}"
         echo "Sleeping ${SLEEP_SECONDS}s before next version..."
         sleep "${SLEEP_SECONDS}"
       else
