@@ -63,25 +63,25 @@ This project provides independent verification and direct metadata for AWS CLI v
 * Official AWS source tag: ${AWS_CLI_VERSION}: [${AWS_TAG_URL}](${AWS_TAG_URL})
 * AMD64/x86_64 URL:  [${AMD_URL}](${AMD_URL})
 * ARM64/aarch64 URL: [${ARM_URL}](${ARM_URL})
-* SHA512 checksum file for AMD64/x86_64  [${AMD_SHA512:0:30}...](https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/${AWS_CLI_VERSION}/amd.sha512)
-* SHA512 checksum file for ARM64/aarch64 [${ARM_SHA512:0:30}...](https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/${AWS_CLI_VERSION}/arm.sha512)
+* SHA512 checksum file for AMD64/x86_64  [${AMD_SHA512:0:30}...](https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/${AWS_CLI_VERSION}/amd-${AWS_CLI_VERSION}.sha512)
+* SHA512 checksum file for ARM64/aarch64 [${ARM_SHA512:0:30}...](https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/${AWS_CLI_VERSION}/arm-${AWS_CLI_VERSION}.sha512)
 
 Use the following patterns in your Dockerfile builds:
 
 \`\`\`
 # AMD64/x86_64:
 ENV AWS_CLI_VERSION=${AWS_CLI_VERSION}
-ENV AWS_CLI_URL=https://awscli.amazonaws.com/awscli-exe-linux-x86_64-\${AWS_CLI_VERSION}.zip\`
+ENV AWS_CLI_URL=https://awscli.amazonaws.com/awscli-exe-linux-x86_64-\${AWS_CLI_VERSION}.zip
 
 # ARM64/aarch64:
 ENV AWS_CLI_VERSION=${AWS_CLI_VERSION}
-ENV AWS_CLI_URL=https://awscli.amazonaws.com/awscli-exe-linux-aarch64-\${AWS_CLI_VERSION}.zip\`
+ENV AWS_CLI_URL=https://awscli.amazonaws.com/awscli-exe-linux-aarch64-\${AWS_CLI_VERSION}.zip
 \`\`\`
 
 Raw SHA512 checksums:
 
 * AMD64/x86_64  ${AMD_SHA512}
-* ARM64/aarch6: ${ARM_SHA512}
+* ARM64/aarch64: ${ARM_SHA512}
 
 Independently validate by grabbing a checksum from this release:
 
@@ -90,7 +90,7 @@ For AMD64/x86_64:
 \`\`\`bash
 # 1. Download the binary and the trusted checksum
 curl -sL "\${AWS_CLI_URL}" -o awscliv2.zip
-curl -sL "https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/\${AWS_CLI_VERSION}/amd.sha512" -o trusted.sha512
+curl -sL "https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/\${AWS_CLI_VERSION}/amd-\${AWS_CLI_VERSION}.sha512" -o trusted.sha512
 
 # 2. Compare them
 echo "\$(cat trusted.sha512)  awscliv2.zip" | sha512sum --check
@@ -101,7 +101,7 @@ For ARM64/aarch64:
 \`\`\`bash
 # 1. Download the binary and the trusted checksum
 curl -sL "\${AWS_CLI_URL}" -o awscliv2.zip
-curl -sL "https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/\${AWS_CLI_VERSION}/arm.sha512" -o trusted.sha512
+curl -sL "https://github.com/kube-kaptain/aws-cli-v2-index/releases/download/\${AWS_CLI_VERSION}/arm-\${AWS_CLI_VERSION}.sha512" -o trusted.sha512
 
 # 2. Compare them
 echo "\$(cat trusted.sha512)  awscliv2.zip" | sha512sum --check
