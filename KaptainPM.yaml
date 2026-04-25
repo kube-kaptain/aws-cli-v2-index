@@ -1,0 +1,26 @@
+apiVersion: kaptain.org/1.15
+kind: basic-quality-and-versioning
+metadata:
+  description: "AWS CLI v2 binary checksum index"
+
+spec:
+  layers:
+    - layer-github-flow-strict:[1.3,2.0)
+  main:
+    hooks:
+      preTaggingTests: .github/bin/checksum-aws-cli-v2-binaries.bash
+  global:
+    release:
+      versioning:
+        strategy: file-pattern-match
+        patternType: custom
+        source:
+          subPath: .
+          fileName: VERSION
+          pattern: '^AWS_CLI_VERSION=\"([0-9]+\.[0-9]+\.[0-9]+)\"$'
+        useSourceVersionExact: true
+  platform:
+    githubActions:
+      release:
+        notesFile: target/release_notes.md
+        verbatimFiles: "target/amd.sha512 target/amd.url target/arm.sha512 target/arm.url"
