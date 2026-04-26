@@ -7,8 +7,9 @@ if [ -z "${OUTPUT_SUB_PATH:-}" ]; then
   exit 1
 fi
 
-rm -rf "${OUTPUT_SUB_PATH}"
-mkdir -p "${OUTPUT_SUB_PATH}"
+OUT="${OUTPUT_SUB_PATH}/aws-cli-v2-index"
+rm -rf "${OUT}"
+mkdir -p "${OUT}"
 
 # 1. Config
 echo "Pulling configuration from repo root VERSION file..."
@@ -28,34 +29,34 @@ echo
 
 # 3. Process x86_64 (AMD)
 echo "Verifying AMD64 version '${AWS_CLI_VERSION}'..."
-curl -sL "${AMD_URL}" -o "${OUTPUT_SUB_PATH}/awscli-amd.zip"
-AMD_SHA512=$(sha512sum "${OUTPUT_SUB_PATH}/awscli-amd.zip" | awk '{print $1}')
+curl -sL "${AMD_URL}" -o "${OUT}/awscli-amd.zip"
+AMD_SHA512=$(sha512sum "${OUT}/awscli-amd.zip" | awk '{print $1}')
 echo "SHA512 is ${AMD_SHA512}"
 echo "Unzipping and native execution to check version..."
-unzip -q "${OUTPUT_SUB_PATH}/awscli-amd.zip" -d "${OUTPUT_SUB_PATH}/check_amd"
-"${OUTPUT_SUB_PATH}/check_amd/aws/dist/aws" --version | grep -q "${AWS_CLI_VERSION}"
+unzip -q "${OUT}/awscli-amd.zip" -d "${OUT}/check_amd"
+"${OUT}/check_amd/aws/dist/aws" --version | grep -q "${AWS_CLI_VERSION}"
 echo
 
 # 4. Process aarch64 (ARM)
 echo "Verifying ARM64 version '${AWS_CLI_VERSION}'..."
-curl -sL "${ARM_URL}" -o "${OUTPUT_SUB_PATH}/awscli-arm.zip"
-ARM_SHA512=$(sha512sum "${OUTPUT_SUB_PATH}/awscli-arm.zip" | awk '{print $1}')
+curl -sL "${ARM_URL}" -o "${OUT}/awscli-arm.zip"
+ARM_SHA512=$(sha512sum "${OUT}/awscli-arm.zip" | awk '{print $1}')
 echo "SHA512 is ${ARM_SHA512}"
 echo "Unzipping and verifying ARM64 binary architecture..."
-unzip -q "${OUTPUT_SUB_PATH}/awscli-arm.zip" -d "${OUTPUT_SUB_PATH}/check_arm"
-file "${OUTPUT_SUB_PATH}/check_arm/aws/dist/aws" | grep -q "aarch64"
+unzip -q "${OUT}/awscli-arm.zip" -d "${OUT}/check_arm"
+file "${OUT}/check_arm/aws/dist/aws" | grep -q "aarch64"
 echo
 
 # 5. Generate Artifacts
 echo "Generating GH release artifacts..."
-echo "${AMD_URL}" > "${OUTPUT_SUB_PATH}/amd.url"
-echo "${AMD_SHA512}" > "${OUTPUT_SUB_PATH}/amd.sha512"
-echo "${ARM_URL}" > "${OUTPUT_SUB_PATH}/arm.url"
-echo "${ARM_SHA512}" > "${OUTPUT_SUB_PATH}/arm.sha512"
+echo "${AMD_URL}" > "${OUT}/amd.url"
+echo "${AMD_SHA512}" > "${OUT}/amd.sha512"
+echo "${ARM_URL}" > "${OUT}/arm.url"
+echo "${ARM_SHA512}" > "${OUT}/arm.sha512"
 echo
 echo "Generating release notes..."
 # Clean block template using the specific variables set above
-cat <<EOF > "${OUTPUT_SUB_PATH}/release_notes.md"
+cat <<EOF > "${OUT}/release_notes.md"
 ## AWS CLI V2 Index: ${AWS_CLI_VERSION}
 
 This project provides independent verification and direct metadata for AWS CLI v2 binaries.
@@ -111,4 +112,4 @@ Please note that the ARM binary version is not verified, but it should be the sa
 
 EOF
 
-echo "Complete. All files generated in ${OUTPUT_SUB_PATH}"
+echo "Complete. All files generated in ${OUT}"

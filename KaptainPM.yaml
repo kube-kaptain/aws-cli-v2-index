@@ -22,5 +22,5 @@ spec:
   platform:
     githubActions:
       release:
-        notesFile: kaptain-out/release_notes.md
-        verbatimFiles: "kaptain-out/amd.sha512 kaptain-out/amd.url kaptain-out/arm.sha512 kaptain-out/arm.url"
+        notesFile: kaptain-out/aws-cli-v2-index/release_notes.md
+        verbatimFiles: "kaptain-out/aws-cli-v2-index/amd.sha512 kaptain-out/aws-cli-v2-index/amd.url kaptain-out/aws-cli-v2-index/arm.sha512 kaptain-out/aws-cli-v2-index/arm.url"
