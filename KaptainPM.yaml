@@ -22,5 +22,5 @@ spec:
   platform:
     githubActions:
       release:
-        notesFile: target/release_notes.md
-        verbatimFiles: "target/amd.sha512 target/amd.url target/arm.sha512 target/arm.url"
+        notesFile: kaptain-out/release_notes.md
+        verbatimFiles: "kaptain-out/amd.sha512 kaptain-out/amd.url kaptain-out/arm.sha512 kaptain-out/arm.url"
